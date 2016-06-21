@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">what-ifsp-zap</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_detalhe">Detalhe</string>
+    <string name="title_activity_base">Base</string>
+    <string name="search_hint">Buscar contato</string>
+    <string name="title_activity_search">Busca</string>
 </resources>
