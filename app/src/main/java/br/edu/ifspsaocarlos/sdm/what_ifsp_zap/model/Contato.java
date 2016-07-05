@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class Contato implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private Integer id;
     private String nomeCompleto;
     private String apelido;
@@ -24,11 +25,23 @@ public class Contato implements Serializable {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getNomeCompleto() {
         return nomeCompleto;
     }
 
+    public void setNomeCompleto(String nomeCompleto) {
+        this.nomeCompleto = nomeCompleto;
+    }
+
     public String getApelido() {
         return apelido;
+    }
+
+    public void setApelido(String apelido) {
+        this.apelido = apelido;
     }
 }
