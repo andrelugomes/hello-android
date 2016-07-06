@@ -6,7 +6,7 @@ import android.app.Activity;
 public abstract class RestServiceFactory {
 
 
-    public RestService getRestService(Activity activity){
+    public static RestService getRestService(Activity activity){
         return new RestServiceImpl(activity);
     }
 

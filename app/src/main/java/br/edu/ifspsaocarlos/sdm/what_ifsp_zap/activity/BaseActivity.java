@@ -1,4 +1,5 @@
 package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.activity;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
@@ -18,6 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +33,8 @@ import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.R;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.adapter.ContatoArrayAdapter;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.provider.ContatoProvider;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestService;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestServiceFactory;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -34,17 +44,19 @@ public class BaseActivity extends AppCompatActivity {
     protected SearchView searchView;
     private Uri uriContatos = ContatoProvider.Contatos.CONTENT_URI;
 
+    public RestService service;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        service = RestServiceFactory.getRestService(this);
         list = (ListView) findViewById(R.id.listView);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2,
-                                    long arg3) {
+            public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2, long arg3) {
                 Contato contact = (Contato) adapterView.getAdapter().getItem(arg2);
                 //TODO - ir para a conversa ao inves de ir pro Detalhe
                 Intent inte = new Intent(getApplicationContext(), DetalheActivity.class);
@@ -103,12 +115,15 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void buildListForAllUsers() {
-        List<Contato> contatos = new ArrayList<>();
-        contatos.add(new Contato(1,"Andre", "Ibate"));
-        contatos.add(new Contato(2,"Marcos", "Lagosta"));
-
-        adapter = new ContatoArrayAdapter(this, contatos);
-        list.setAdapter(adapter);
+        final Activity baseActivity = this;
+        service.getAllContatos(
+            new Response.Listener<List<Contato>>() {
+                @Override
+                public void onResponse(List<Contato> contatos) {
+                    list.setAdapter(new ContatoArrayAdapter(baseActivity,contatos));
+                }
+            }
+        );
     }
 
     protected void buildSearchListView(String query) {
