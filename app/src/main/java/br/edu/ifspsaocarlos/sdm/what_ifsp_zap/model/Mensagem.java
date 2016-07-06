@@ -16,4 +16,60 @@ public class Mensagem implements Serializable{
     private Contato destino;
     private Contato origem;
 
+    public Mensagem(Integer idOrigem, Integer idDestino, String assunto, String corpo, Contato destino, Contato origem) {
+        this.idOrigem = idOrigem;
+        this.idDestino = idDestino;
+        this.assunto = assunto;
+        this.corpo = corpo;
+        this.destino = destino;
+        this.origem = origem;
+    }
+
+    public Integer getIdOrigem() {
+        return idOrigem;
+    }
+
+    public void setIdOrigem(Integer idOrigem) {
+        this.idOrigem = idOrigem;
+    }
+
+    public Integer getIdDestino() {
+        return idDestino;
+    }
+
+    public void setIdDestino(Integer idDestino) {
+        this.idDestino = idDestino;
+    }
+
+    public String getAssunto() {
+        return assunto;
+    }
+
+    public void setAssunto(String assunto) {
+        this.assunto = assunto;
+    }
+
+    public String getCorpo() {
+        return corpo;
+    }
+
+    public void setCorpo(String corpo) {
+        this.corpo = corpo;
+    }
+
+    public Contato getDestino() {
+        return destino;
+    }
+
+    public void setDestino(Contato destino) {
+        this.destino = destino;
+    }
+
+    public Contato getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(Contato origem) {
+        this.origem = origem;
+    }
 }
