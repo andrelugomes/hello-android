@@ -18,8 +18,7 @@ public class ContatoArrayAdapter extends ArrayAdapter<Contato> {
 
     public ContatoArrayAdapter(Activity activity, List<Contato> objects) {
         super(activity, R.layout.contato_celula, objects);
-        this.inflater = (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     //get view é chamado sempre que precisa mostrar. A ListView que o invoca
@@ -31,6 +30,7 @@ public class ContatoArrayAdapter extends ArrayAdapter<Contato> {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.contato_celula, null);
             holder = new ViewHolder();
+            holder.idContato = (TextView) convertView.findViewById(R.id.idContato);
             holder.nome = (TextView) convertView.findViewById(R.id.nome);
             holder.apelido = (TextView) convertView.findViewById(R.id.apelido);
             convertView.setTag(holder);
@@ -38,12 +38,14 @@ public class ContatoArrayAdapter extends ArrayAdapter<Contato> {
             holder = (ViewHolder) convertView.getTag();
         }
         Contato c = getItem(position);
+        holder.idContato.setText(c.getId().toString());
         holder.nome.setText(c.getNomeCompleto());
         holder.apelido.setText(c.getApelido());
         return convertView;
     }
 
     static class ViewHolder {
+        public TextView idContato;
         public TextView nome;
         public TextView apelido;
     }

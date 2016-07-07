@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service;
+package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message;
 
 import android.content.Context;
 
@@ -19,15 +19,18 @@ import java.util.List;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Mensagem;
 
+/**
+ * Created by agomes on 07/07/16.
+ */
+public class MessageRestServiceImpl implements MessageRestService {
 
-class RestServiceImpl implements RestService{
     private static final String SERVICE = "http://www.nobile.pro.br/sdm/mensageiro";
 
     private RequestQueue queue;
     private Context context;
     private Response.ErrorListener error;
 
-    RestServiceImpl(Context context){
+    public MessageRestServiceImpl(Context context) {
         this.queue = Volley.newRequestQueue(context);
         this.context = context;
         this.error = new Response.ErrorListener() {
@@ -37,19 +40,20 @@ class RestServiceImpl implements RestService{
         };
     }
 
-    public void getAllContatos(final Response.Listener<List<Contato>> callback){
-        final String url = SERVICE + "/contato";
+    @Override
+    public void getMensagens(final Integer deslocamentoMensagem, final Integer remetente, final Integer destinatario, final Response.Listener<List<Mensagem>> callback) {
+        final String url = SERVICE + String.format("/mensagem/%s/%s/%s", deslocamentoMensagem, remetente, destinatario);
 
         Response.Listener success = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    JSONArray jsonArray = response.getJSONArray("contatos");
+                    JSONArray jsonArray = response.getJSONArray("mensagens");
 
-                    List<Contato> list = new ArrayList<>();
+                    List<Mensagem> list = new ArrayList<>();
 
                     for (int i = 0; i < jsonArray.length(); i++)
-                        list.add(fillContato(jsonArray.getJSONObject(i)));
+                        list.add(fillMensagem(jsonArray.getJSONObject(i)));
 
                     callback.onResponse(list);
                 }
@@ -58,21 +62,21 @@ class RestServiceImpl implements RestService{
                 }
             }
         };
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, success, error);
         queue.add(jsonObjectRequest);
     }
 
     @Override
-    public void getContato(final Integer id, final Response.Listener<Contato> callback) {
-        final String url = SERVICE + "/contato/" + id;
+    public void sendMensagem(final Integer remetente, final Integer destinatario,
+                             final String assunto, final String corpo, final Response.Listener<Mensagem> callback){
+        final String url = SERVICE + "/mensagem";
 
         Response.Listener success = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Contato contato = fillContato(response);
-                    callback.onResponse(contato);
+                    Mensagem mensagem = fillMensagem(response);
+                    callback.onResponse(mensagem);
                 }
                 catch (JSONException e) {
                     error.onErrorResponse(new VolleyError(e));
@@ -80,27 +84,7 @@ class RestServiceImpl implements RestService{
             }
         };
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, success, error);
-        queue.add(jsonObjectRequest);
-    }
-
-    @Override
-    public void newContato(final String nomeCompleto, final String apelido, final Response.Listener<Contato> callback) {
-        final String url = SERVICE + "/contato";
-
-        Response.Listener success = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    Contato contato = fillContato(response);
-                    callback.onResponse(contato);
-                }
-                catch (JSONException e) {
-                    error.onErrorResponse(new VolleyError(e));
-                }
-            }
-        };
-        String body = String.format("{\"nome_completo\":\"%s\",\"apelido\":\"%s\"}",nomeCompleto, apelido);
+        String body = "{\"origem_id\":\"%s\",\"destino_id\":\"%s\",\"assunto\":\"%s\",\"corpo\":\"%s\"}";
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(body), success, error);
             queue.add(jsonObjectRequest);
@@ -110,6 +94,7 @@ class RestServiceImpl implements RestService{
         }
     }
 
+
     private Contato fillContato(JSONObject jsonobject) throws JSONException {
         String name_completo = jsonobject.getString("nome_completo");
         String apelido = jsonobject.getString("apelido");
@@ -117,6 +102,17 @@ class RestServiceImpl implements RestService{
         return new Contato(Integer.valueOf(id), name_completo, apelido);
     }
 
+    private Mensagem fillMensagem(JSONObject jsonobject) throws JSONException {
 
+        String id = jsonobject.getString("id");
+        String origem_id = jsonobject.getString("origem_id");
+        String destino_id = jsonobject.getString("destino_id");
+        String assunto = jsonobject.getString("assunto");
+        String corpo = jsonobject.getString("corpo");
+
+        Contato origem = fillContato(jsonobject.getJSONObject("origem"));
+        Contato destino = fillContato(jsonobject.getJSONObject("destino"));
+
+        return new Mensagem(Integer.valueOf(origem_id), Integer.valueOf(destino_id), assunto, corpo, destino, origem);
+    }
 }
-

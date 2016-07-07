@@ -1,52 +1,57 @@
 package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.activity;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
+import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.android.volley.Response;
+
 import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.R;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.adapter.MensagemArrayAdapter;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
-import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.provider.ContatoProvider;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Mensagem;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.ContatoRepository;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.ContatoRepositoryFactory;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message.MessageRestService;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message.MessageRestServiceFactory;
 
 public class MessageActivity extends AppCompatActivity {
 
     private Contato c;
-    private Uri uriContatos = ContatoProvider.Contatos.CONTENT_URI;
+    private ContatoRepository repository = ContatoRepositoryFactory.getRepository(this);
+    private MessageRestService service;
+    private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mensage);
+        setContentView(R.layout.activity_menssage);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        service = MessageRestServiceFactory.getService(this);
+        list = (ListView) findViewById(R.id.listMessages);
+
         if (getIntent().hasExtra("contact")) {
             this.c = (Contato) getIntent().getSerializableExtra("contact");
-            List<Contato> contatos = new ArrayList<>();
-            String where = ContatoProvider.Contatos.KEY_ID + " = ?";
-            String[] whereargs = new String[] {c.getId().toString()};
-            Cursor cursor = getContentResolver().query(uriContatos,null,where,whereargs,null,null);
-            if (cursor == null){
-                ContentValues valores= new ContentValues();
-                valores.put(ContatoProvider.Contatos.KEY_NAME, c.getId());
-                valores.put(ContatoProvider.Contatos.KEY_NAME, c.getNomeCompleto());
-                valores.put(ContatoProvider.Contatos.KEY_NICKNAME, c.getApelido());
-                getContentResolver().insert(uriContatos, valores);
+
+            Contato contato = repository.buscaPorId(c.getId());
+            if (contato.getId() == null){
+                repository.createContact(new Contato(c.getId(),c.getNomeCompleto(),c.getApelido()));
             }
 
+
+            historicoDeMensagens(1,2,3);
         }
+
     }
 
     @Override
@@ -67,8 +72,7 @@ public class MessageActivity extends AppCompatActivity {
                 salvar();
                 return true;
             case R.id.delContato:
-                //cDAO.deleteContact(c);
-                getContentResolver().delete(ContentUris.withAppendedId(uriContatos, c.getId()), null,null);
+                //repository.deleteContact(c);
                 Toast.makeText(getApplicationContext(), "Removido com sucesso", Toast.LENGTH_SHORT).show();
                 Intent resultIntent = new Intent();
                 setResult(RESULT_OK, resultIntent);
@@ -80,22 +84,18 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     public void salvar() {
-        /*String name = ((EditText) findViewById(R.id.editText1)).getText().toString();
-        String nickname = ((EditText) findViewById(R.id.editText2)).getText().toString();
 
-        ContentValues valores = new ContentValues();
-        valores.put(ContatoProvider.Contatos.KEY_NAME, name);
-        valores.put(ContatoProvider.Contatos.KEY_NICKNAME, nickname);
+    }
 
-        if (c == null) {
-            getContentResolver().insert(uriContatos, valores);
-            Toast.makeText(this, "Incluído com sucesso", Toast.LENGTH_SHORT).show();
-        } else {
-            getContentResolver().update(ContentUris.withAppendedId(uriContatos, c.getId()), valores, null, null);
-            Toast.makeText(this, "Alterado com sucesso", Toast.LENGTH_SHORT).show();
-        }
-        Intent resultIntent = new Intent();
-        setResult(RESULT_OK, resultIntent);
-        finish();*/
+    public void historicoDeMensagens(Integer idRemetemte, Integer idDestino, Integer lastMessageId) {
+        final Activity messageActivity = this;
+        service.getMensagens(lastMessageId, idRemetemte, idDestino,
+            new Response.Listener<List<Mensagem>>() {
+                @Override
+                public void onResponse(List<Mensagem> mensagens) {
+                list.setAdapter(new MensagemArrayAdapter(messageActivity, mensagens));
+                }
+            }
+        );
     }
 }

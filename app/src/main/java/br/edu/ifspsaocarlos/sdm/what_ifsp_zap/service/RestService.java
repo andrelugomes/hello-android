@@ -15,9 +15,4 @@ public interface RestService {
     void getContato(final Integer id, final Response.Listener<Contato> callback);
 
     void newContato(final String nomeCompleto, final String apelido, final Response.Listener<Contato> callback);
-
-    void getMensagens(final Integer deslocamentoMensagem, final Integer remetente, final Integer destinatario, final Response.Listener<List<Mensagem>> callback);
-
-    void sendMensagem(final Integer remetente, final Integer destinatario,
-                     final String assunto, final String corpo, final Response.Listener<Mensagem> callback);
 }

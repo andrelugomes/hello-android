@@ -26,18 +26,18 @@ import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.R;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.adapter.ContatoArrayAdapter;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.ContatoRepository;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.ContatoRepositoryFactory;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
-import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.provider.ContatoProvider;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestService;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestServiceFactory;
 
 public class BaseActivity extends AppCompatActivity {
 
-    //protected ContatoDAO cDAO = new ContatoDAO(this);
+    protected ContatoRepository repository = ContatoRepositoryFactory.getRepository(this);
     protected ListView list;
     protected ContatoArrayAdapter adapter;
     protected SearchView searchView;
-    private Uri uriContatos = ContatoProvider.Contatos.CONTENT_URI;
 
     public RestService service;
 
@@ -53,7 +53,6 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2, long arg3) {
                 Contato contact = (Contato) adapterView.getAdapter().getItem(arg2);
-                //TODO - ir para a conversa ao inves de ir pro Detalhe
                 Intent inte = new Intent(getApplicationContext(), MessageActivity.class);
                 inte.putExtra("contact", contact);
                 startActivityForResult(inte, 0);
@@ -91,7 +90,7 @@ public class BaseActivity extends AppCompatActivity {
         Contato contact = adapter.getItem(info.position);
         switch (item.getItemId()) {
             case R.id.delete_item:
-                getContentResolver().delete(ContentUris.withAppendedId(uriContatos, contact.getId()), null, null);
+                //getContentResolver().delete(ContentUris.withAppendedId(uriContatos, contact.getId()), null, null);
                 Toast.makeText(getApplicationContext(), "Removido com sucesso", Toast.LENGTH_SHORT).show();
                 buildListView();
                 return true;
@@ -100,11 +99,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void buildListView() {
-        List<Contato> contatos = new ArrayList<>();
-        Cursor cursor = getContentResolver().query(uriContatos, null, null, null, null);
-        if (cursor!=null) {
-            contatos = cursorTolist(cursor);
-        }
+        List<Contato> contatos= repository.buscaTodosContatos();
         adapter = new ContatoArrayAdapter(this, contatos);
         list.setAdapter(adapter);
     }
@@ -123,12 +118,12 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void buildSearchListView(String query) {
         List<Contato> contatos = new ArrayList<>();
-        String where = ContatoProvider.Contatos.KEY_NAME + " like ?";
+        //String where = ContatoProvider.Contatos.KEY_NAME + " like ?";
         String[] whereargs = new String[] {query + "%"};
-        Cursor cursor = getContentResolver().query(uriContatos,null,where,whereargs,null,null);
-        if (cursor!=null){
-            contatos = cursorTolist(cursor);
-        }
+        //Cursor cursor = getContentResolver().query(uriContatos,null,where,whereargs,null,null);
+        //if (cursor!=null){
+          //  contatos = cursorTolist(cursor);
+       // }
         adapter = new ContatoArrayAdapter(this, contatos);
         list.setAdapter(adapter);
     }
