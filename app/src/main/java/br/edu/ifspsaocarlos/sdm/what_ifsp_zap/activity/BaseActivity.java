@@ -20,11 +20,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +54,13 @@ public class BaseActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2, long arg3) {
                 Contato contact = (Contato) adapterView.getAdapter().getItem(arg2);
                 //TODO - ir para a conversa ao inves de ir pro Detalhe
-                Intent inte = new Intent(getApplicationContext(), DetalheActivity.class);
+                Intent inte = new Intent(getApplicationContext(), MessageActivity.class);
                 inte.putExtra("contact", contact);
                 startActivityForResult(inte, 0);
             }
         });
 
-        //TODO - Carregar todos os usuário pelo GET e uma task assync
+        // Carregar todos os usuário pelo GET com Volley
         if (getIntent().hasExtra("findNewUser")) {
             buildListForAllUsers();
         }
@@ -96,7 +91,7 @@ public class BaseActivity extends AppCompatActivity {
         Contato contact = adapter.getItem(info.position);
         switch (item.getItemId()) {
             case R.id.delete_item:
-                getContentResolver().delete(ContentUris.withAppendedId(uriContatos, contact.getId()), null,null);
+                getContentResolver().delete(ContentUris.withAppendedId(uriContatos, contact.getId()), null, null);
                 Toast.makeText(getApplicationContext(), "Removido com sucesso", Toast.LENGTH_SHORT).show();
                 buildListView();
                 return true;

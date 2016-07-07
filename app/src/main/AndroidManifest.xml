@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme.NoActionBar" >
         <provider
             android:name=".provider.ContatoProvider"
-            android:authorities="br.edu.ifspsaocarlos.sdm.agenda.provider"
+            android:authorities="br.edu.ifspsaocarlos.sdm.what_ifsp_zap.provider"
             android:exported="true" >
         </provider>
         <activity
@@ -28,7 +28,7 @@
                 android:value=".activity.SearchActivity" />
         </activity>
         <activity
-            android:name=".activity.DetalheActivity"
+            android:name=".activity.MessageActivity"
             android:label="@string/title_activity_detalhe" >
         </activity>
         <activity
