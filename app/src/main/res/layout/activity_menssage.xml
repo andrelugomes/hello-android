@@ -15,13 +15,43 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ListView
-        android:id="@+id/listMessages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <LinearLayout
+        android:gravity="center|center_vertical"
+        android:orientation="vertical"
+        android:layout_height="fill_parent"
+        android:layout_width="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/lista">
+            <ListView
+                android:id="@+id/listMessages"
+                android:gravity="top|center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <include layout="@layout/content_message" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="205dp"
+            android:layout_width="fill_parent"
+            android:background="#d8d3d3">
 
-
+            <EditText
+                android:id="@+id/messageToSend"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:maxLength="150"
+                android:gravity="top|left"
+                android:textSize="20sp" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enviar"
+                android:gravity="top|right"
+                android:id="@+id/sendMessage"/>
+        </LinearLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

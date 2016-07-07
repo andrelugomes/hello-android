@@ -113,6 +113,6 @@ public class MessageRestServiceImpl implements MessageRestService {
         Contato origem = fillContato(jsonobject.getJSONObject("origem"));
         Contato destino = fillContato(jsonobject.getJSONObject("destino"));
 
-        return new Mensagem(Integer.valueOf(origem_id), Integer.valueOf(destino_id), assunto, corpo, destino, origem);
+        return new Mensagem(Integer.valueOf(id),Integer.valueOf(origem_id), Integer.valueOf(destino_id), assunto, corpo, destino, origem);
     }
 }
