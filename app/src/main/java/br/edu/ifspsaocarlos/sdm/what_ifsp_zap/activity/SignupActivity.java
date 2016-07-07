@@ -3,11 +3,8 @@ package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +18,11 @@ import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestServiceFactory;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.UserService;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.util.MessageUtil;
 
+/**
+ *
+ * Activity para controlar o cadastro do usuário ou redireciona-lo caso já exista um id criado em Shared Preference.
+ *
+ */
 public class SignupActivity extends BaseActivity {
 
     private RestService rest;
@@ -28,16 +30,16 @@ public class SignupActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signin_activity);
 
         //Verifica se já existe usuário criado
         int id = getUserIdFromSharedPreference();
-
         if(id != -1){
             UserService.getInstance().setId(id);
-            changeActivity();
+            goToMainActivity();
+            return;
         }
-        //
+
+        setContentView(R.layout.signin_activity);
 
         rest = RestServiceFactory.getRestService(this);
 
@@ -55,7 +57,7 @@ public class SignupActivity extends BaseActivity {
             public void onResponse(Contato response) {
                 UserService.getInstance().setId(response.getId());
                 setUserIdFromSharedPreference(response.getId());
-                changeActivity();
+                goToMainActivity();
             }
         };
 
@@ -86,9 +88,11 @@ public class SignupActivity extends BaseActivity {
             throw new RuntimeException("All fields are required.");
     }
 
-    private void changeActivity(){
-        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+    private void goToMainActivity(){
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        finish();
     }
 
     private Integer getUserIdFromSharedPreference(){
