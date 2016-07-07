@@ -80,7 +80,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     public void salvar() {
-        String name = ((EditText) findViewById(R.id.editText1)).getText().toString();
+        /*String name = ((EditText) findViewById(R.id.editText1)).getText().toString();
         String nickname = ((EditText) findViewById(R.id.editText2)).getText().toString();
 
         ContentValues valores = new ContentValues();
@@ -96,6 +96,6 @@ public class MessageActivity extends AppCompatActivity {
         }
         Intent resultIntent = new Intent();
         setResult(RESULT_OK, resultIntent);
-        finish();
+        finish();*/
     }
 }
