@@ -5,4 +5,5 @@
     <string name="title_activity_base">Base</string>
     <string name="search_hint">Buscar contato</string>
     <string name="title_activity_search">Busca</string>
+
 </resources>
