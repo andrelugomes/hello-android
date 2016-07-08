@@ -17,16 +17,18 @@ import java.util.Map;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.R;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Mensagem;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message.MessageRestService;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message.MessageRestServiceFactory;
 
 /**
  * Seviço que roda em background verificando novas mensagens
  */
 public class LoadMessagesService extends Service implements Runnable{
 
-    private RestService service;
+    private MessageRestService service;
 
     public LoadMessagesService(){
-        service = RestServiceFactory.getRestService(this);
+        service = MessageRestServiceFactory.getService(this);
     }
 
     @Override

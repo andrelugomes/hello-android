@@ -112,4 +112,11 @@ public class ContatoRepositoryImpl implements ContatoRepository {
         database.close();
         return contato;
     }
+
+    @Override
+    public void delete(Contato contato) {
+        database=dbHelper.getWritableDatabase();
+        database.delete(SQLiteHelper.DATABASE_CONTATOS, SQLiteHelper.KEY_ID + "=" + contato.getId(), null);
+        database.close();
+    }
 }

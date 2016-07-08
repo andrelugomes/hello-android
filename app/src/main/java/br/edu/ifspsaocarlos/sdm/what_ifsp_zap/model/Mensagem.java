@@ -8,6 +8,8 @@ import java.io.Serializable;
 public class Mensagem implements Serializable{
     private static final long serialVersionUID = 2L;
 
+    private  Integer id;
+
     private Integer idOrigem;
     private Integer idDestino;
     private String assunto;
@@ -16,13 +18,22 @@ public class Mensagem implements Serializable{
     private Contato destino;
     private Contato origem;
 
-    public Mensagem(Integer idOrigem, Integer idDestino, String assunto, String corpo, Contato destino, Contato origem) {
+    public Mensagem(Integer id, Integer idOrigem, Integer idDestino, String assunto, String corpo, Contato destino, Contato origem) {
+        this.id = id;
         this.idOrigem = idOrigem;
         this.idDestino = idDestino;
         this.assunto = assunto;
         this.corpo = corpo;
         this.destino = destino;
         this.origem = origem;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Integer getIdOrigem() {

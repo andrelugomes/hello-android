@@ -16,4 +16,6 @@ public interface ContatoRepository {
     public void createContact(Contato contato);
 
     public Contato buscaPorId(Integer id);
+
+    void delete(Contato contato);
 }
