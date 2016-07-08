@@ -6,4 +6,6 @@
     <string name="search_hint">Buscar contato</string>
     <string name="title_activity_search">Busca</string>
 
+    <string name="user_shared_preferences">user_shared_preferences</string>
+    <string name="user_id">user_id</string>
 </resources>
