@@ -67,8 +67,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public void sendMensagem(final Integer remetente, final Integer destinatario,
-                             final String assunto, final String corpo, final Response.Listener<Mensagem> callback){
+    public void sendMensagem(final Integer remetente, final Integer destinatario,final String assunto, final String corpo, final Response.Listener<Mensagem> callback){
         final String url = SERVICE + "/mensagem";
 
         Response.Listener success = new Response.Listener<JSONObject>() {
@@ -84,7 +83,8 @@ public class MessageRestServiceImpl implements MessageRestService {
             }
         };
 
-        String body = "{\"origem_id\":\"%s\",\"destino_id\":\"%s\",\"assunto\":\"%s\",\"corpo\":\"%s\"}";
+        String body = String.format("{\"origem_id\":\"%s\",\"destino_id\":\"%s\",\"assunto\":\"%s\",\"corpo\":\"%s\"}",
+                remetente,destinatario,assunto,corpo);
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(body), success, error);
             queue.add(jsonObjectRequest);
@@ -109,9 +109,15 @@ public class MessageRestServiceImpl implements MessageRestService {
         String destino_id = jsonobject.getString("destino_id");
         String assunto = jsonobject.getString("assunto");
         String corpo = jsonobject.getString("corpo");
+        Contato destino = null;
+        Contato origem = null;
+        try {
+            final JSONObject destinoJson = jsonobject.getJSONObject("destino");
+            destino = fillContato(destinoJson);
+            final JSONObject origenJson = jsonobject.getJSONObject("origem");
+            origem = fillContato(origenJson);
+        }catch (Exception e){ }
 
-        Contato origem = fillContato(jsonobject.getJSONObject("origem"));
-        Contato destino = fillContato(jsonobject.getJSONObject("destino"));
 
         return new Mensagem(Integer.valueOf(id),Integer.valueOf(origem_id), Integer.valueOf(destino_id), assunto, corpo, destino, origem);
     }

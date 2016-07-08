@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,6 +37,10 @@ public class MessageActivity extends AppCompatActivity {
     private MessageRestService service;
     private ListView list;
 
+    private Integer idDestino;
+    private Integer user;
+    private int initialMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,25 +51,43 @@ public class MessageActivity extends AppCompatActivity {
         service = MessageRestServiceFactory.getService(this);
         list = (ListView) findViewById(R.id.listMessages);
 
-        Button btnSignup = (Button) findViewById(R.id.sendMessage);
-        btnSignup.setOnClickListener(sendMessage());
+        Button btnSend = (Button) findViewById(R.id.sendMessage);
+        btnSend.setOnClickListener(sendMessage());
 
         if (getIntent().hasExtra("contact")) {
             this.c = (Contato) getIntent().getSerializableExtra("contact");
+            this.idDestino = c.getId();
 
             Contato contato = repository.buscaPorId(c.getId());
             if (contato.getId() == null){
                 repository.createContact(new Contato(c.getId(),c.getNomeCompleto(),c.getApelido()));
             }
-
-
-            historicoDeMensagens(c.getId(), UserService.getInstance().getId(), 1);
+            user = UserService.getInstance().getId();
+            initialMessage = 1;
+            historicoDeMensagens(idDestino, user, initialMessage);
         }
-
     }
 
     private View.OnClickListener sendMessage() {
-        return null;
+
+        final Integer user = UserService.getInstance().getId();
+        final EditText textToSend = (EditText) findViewById(R.id.messageToSend);
+
+        final Response.Listener<Mensagem> success = new Response.Listener<Mensagem>() {
+            @Override
+            public void onResponse(Mensagem response) {
+                textToSend.setText("");
+                Toast.makeText(getApplicationContext(),"Mensagem enviada!",Toast.LENGTH_SHORT).show();
+                historicoDeMensagens(idDestino, user, initialMessage);
+            }
+        };
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String corpo = textToSend.getText().toString();
+                service.sendMensagem(user, idDestino, "Instant message!", corpo, success);
+            }
+        };
     }
 
     @Override
@@ -81,11 +104,11 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.salvarContato:
-                salvar();
+            case R.id.refresh:
+                refreshMessages();
                 return true;
             case R.id.delContato:
-                //repository.deleteContact(c);
+                repository.delete(c);
                 Toast.makeText(getApplicationContext(), "Removido com sucesso", Toast.LENGTH_SHORT).show();
                 Intent resultIntent = new Intent();
                 setResult(RESULT_OK, resultIntent);
@@ -96,8 +119,8 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
-    public void salvar() {
-
+    public void refreshMessages() {
+        historicoDeMensagens(idDestino, user, initialMessage);
     }
 
     public void historicoDeMensagens(final Integer idRemetemte, final Integer idDestino, final Integer lastMessageId) {
