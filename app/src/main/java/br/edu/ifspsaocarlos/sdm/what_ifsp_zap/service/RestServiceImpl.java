@@ -18,6 +18,8 @@ import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Mensagem;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.LastMessageRepository;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.LastMessageRepositoryFactory;
 
 
 class RestServiceImpl implements RestService{
@@ -27,9 +29,11 @@ class RestServiceImpl implements RestService{
     private Context context;
     private Response.ErrorListener error;
 
+
     RestServiceImpl(Context context){
         this.queue = Volley.newRequestQueue(context);
         this.context = context;
+
         this.error = new Response.ErrorListener() {
             public void onErrorResponse(VolleyError volleyError) {
                 System.out.println(volleyError.toString());

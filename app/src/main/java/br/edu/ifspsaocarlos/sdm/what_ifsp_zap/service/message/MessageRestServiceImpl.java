@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.message;
 
 import android.content.Context;
+import android.os.Message;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,6 +19,8 @@ import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Mensagem;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.LastMessageRepository;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.repositoty.LastMessageRepositoryFactory;
 
 /**
  * Created by agomes on 07/07/16.
@@ -29,10 +32,12 @@ public class MessageRestServiceImpl implements MessageRestService {
     private RequestQueue queue;
     private Context context;
     private Response.ErrorListener error;
+    private LastMessageRepository repository;
 
     public MessageRestServiceImpl(Context context) {
         this.queue = Volley.newRequestQueue(context);
         this.context = context;
+        this.repository = LastMessageRepositoryFactory.getRepository(this.context);
         this.error = new Response.ErrorListener() {
             public void onErrorResponse(VolleyError volleyError) {
                 System.out.println(volleyError.toString());
@@ -52,8 +57,12 @@ public class MessageRestServiceImpl implements MessageRestService {
 
                     List<Mensagem> list = new ArrayList<>();
 
-                    for (int i = 0; i < jsonArray.length(); i++)
-                        list.add(fillMensagem(jsonArray.getJSONObject(i)));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Mensagem msg = fillMensagem(jsonArray.getJSONObject(i));
+
+                        //TODO: Salvar o id da mensagem em LasMessage
+                        list.add(msg);
+                    }
 
                     callback.onResponse(list);
                 }
@@ -75,6 +84,7 @@ public class MessageRestServiceImpl implements MessageRestService {
             public void onResponse(JSONObject response) {
                 try {
                     Mensagem mensagem = fillMensagem(response);
+
                     callback.onResponse(mensagem);
                 }
                 catch (JSONException e) {

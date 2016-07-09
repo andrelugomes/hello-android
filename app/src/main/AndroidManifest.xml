@@ -53,11 +53,11 @@
         </activity>
 
         <service
-            android:name=".service.LoadMessagesService"
+            android:name="br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.LoadMessagesService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="BUSCAR_NOVO_CONTATO_SERVICE" />
+                <action android:name="BUSCAR_NOVAS_MENSAGENS_SERVICE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>

@@ -14,6 +14,7 @@ import com.android.volley.Response;
 
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.R;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.model.Contato;
+import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.LoadMessagesService;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestService;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.RestServiceFactory;
 import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.service.UserService;
@@ -26,17 +27,22 @@ import br.edu.ifspsaocarlos.sdm.what_ifsp_zap.util.MessageUtil;
  */
 public class SignupActivity extends BaseActivity {
 
+    private Intent serviceIntent;
     private RestService rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getApplicationContext()
+
+        //this.serviceIntent = new Intent("BUSCAR_NOVAS_MENSAGENS_SERVICE");
+        //startService(this.serviceIntent);
 
         //Verifica se já existe usuário criado
         int id = getUserIdFromSharedPreference();
         if(id != -1){
             UserService.getInstance().setId(id);
-            goToMainActivity();
+            goToMainActivityAndStartService();
             return;
         }
 
@@ -56,9 +62,9 @@ public class SignupActivity extends BaseActivity {
         final Response.Listener<Contato> success = new Response.Listener<Contato>() {
             @Override
             public void onResponse(Contato response) {
-                UserService.getInstance().setId(response.getId());
-                setUserIdFromSharedPreference(response.getId());
-                goToMainActivity();
+            UserService.getInstance().setId(response.getId());
+            setUserIdFromSharedPreference(response.getId());
+            goToMainActivityAndStartService();
             }
         };
 
@@ -89,10 +95,11 @@ public class SignupActivity extends BaseActivity {
             throw new RuntimeException("All fields are required.");
     }
 
-    private void goToMainActivity(){
+    private void goToMainActivityAndStartService(){
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
         finish();
     }
 
