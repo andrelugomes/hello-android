@@ -35,8 +35,8 @@ public class SignupActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         //getApplicationContext()
 
-        //this.serviceIntent = new Intent("BUSCAR_NOVAS_MENSAGENS_SERVICE");
-        //startService(this.serviceIntent);
+        this.serviceIntent = new Intent(this,LoadMessagesService.class );
+        startService(this.serviceIntent);
 
         //Verifica se já existe usuário criado
         int id = getUserIdFromSharedPreference();
