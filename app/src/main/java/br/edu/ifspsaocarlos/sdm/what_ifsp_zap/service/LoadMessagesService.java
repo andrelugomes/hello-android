@@ -37,9 +37,18 @@ public class LoadMessagesService extends Service implements Runnable{
     private LastMessageRepository lastMessage;
 
     public LoadMessagesService(){
+    }
+
+    public void onCreate(){
+        super.onCreate();
         serviceMessages = MessageRestServiceFactory.getService(this);
         service = RestServiceFactory.getRestService(this);
         lastMessage = LastMessageRepositoryFactory.getRepository(this);
+        new Thread(this).start();
+    }
+
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
