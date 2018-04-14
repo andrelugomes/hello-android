@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ProgramacaoConcorrente</string>
+    <string name="mensagem_carregando">Aguarde enquanto a app é carregada...</string>
+    <string name="mensagem_geral">Clique no botão para disparar a thread e alterar a view</string>
+    <string name="texto_botao">Clique aqui</string>
+    <string name="texto_inicial">Este texto será alterado</string>
+    <string name="texto_alterado">Texto foi alterado pelo clique no botão</string>
+</resources>
